@@ -1,0 +1,12 @@
+# nodejs
+node_modules/
+
+# persistance
+persist.json
+
+# don't share peoples stuff
+config.js
+
+# vim
+*.swp
+*.swo

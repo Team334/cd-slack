@@ -1,0 +1,27 @@
+{
+  "name": "cd-slack",
+  "version": "0.0.1",
+  "description": "Chief Delphi slack bot",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Team334/cd-slack.git"
+  },
+  "keywords": [
+    "slack",
+    "bot"
+  ],
+  "author": "Team 334",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Team334/cd-slack/issues"
+  },
+  "homepage": "https://github.com/Team334/cd-slack#readme",
+  "dependencies": {
+    "request": "^2.81.0",
+    "xml2js": "^0.4.17"
+  }
+}
