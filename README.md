@@ -14,7 +14,7 @@ Sample config:
 
 ```js
 var config = {
-    "slack_webhook_url": "<your incoming webhook urk>",
+    "slack_webhook_url": "<your incoming webhook url>",
     "bot_username": "Chief Delphi Bot", // whatever you want
     "bot_icon_emoji": ":first:",        // the emoji to use as avatar
     "channel": "#programming",          // the channel to post in
