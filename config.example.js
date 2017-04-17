@@ -21,6 +21,8 @@ var config = {
     // $author  - the author that created the post
     // $post    - the text content and link of the post
     // $url     - the url of the post
+    // $thread  - the thread title
+    // $t_url   - the thread url
     "format_keyword": "New mention of *$keyword* by $author: <$url|$post>",
     "format_author": "New post by *$author*: <$url|$post>"
 }

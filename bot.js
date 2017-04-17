@@ -6,7 +6,8 @@ var config  = require('./config');
 var PERSIST_FILE = "persist.json";
 
 var CD_SPY_URL = "https://www.chiefdelphi.com/forums/cdspy.php?do=xml";
-var CD_POST_URL = "https://www.chiefdelphi.com/forums/showpost.php?p=";
+const CD_POST_URL = "https://www.chiefdelphi.com/forums/showpost.php?p=";
+const CD_THREAD_URL = "https://www.chiefdelphi.com/forums/showthread.php?threadid=";
 
 var previousIDs;
 
@@ -40,7 +41,10 @@ function handleXMLPage(xmlData) {
                 authorID : postXML.userid[0],
                 title    : postXML.title[0]
             };
+            // post url
             post.url = CD_POST_URL + post.postID;
+            // thread url
+            post.t_url = CD_THREAD_URL + post.threadID;
 
             newIDs.push(post.id);
 
@@ -93,7 +97,9 @@ function triggeredAuthor(post) {
     var message = config.format_author
                         .replace('$author', post.author)
                         .replace('$url', post.url)
-                        .replace('$post', post.preview);
+                        .replace('$post', post.preview)
+                        .replace('$thread', post.title)
+                        .replace('$t_url', post.t_url);
     sendMessage(message);
 }
 
@@ -103,7 +109,8 @@ function triggeredKeyword(post, keywords) {
                         .replace('$keyword', keywords.join(', '))
                         .replace('$author', post.author)
                         .replace('$url', post.url)
-                        .replace('$post', post.preview);
+                        .replace('$post', post.preview)
+                        .replace('$t_url', post.t_url);
     sendMessage(message);
 }
 
