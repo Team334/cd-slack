@@ -6,7 +6,7 @@ var config  = require('./config');
 var PERSIST_FILE = "persist.json";
 
 var CD_SPY_URL = "https://www.chiefdelphi.com/forums/cdspy.php?do=xml";
-const CD_POST_URL = "https://www.chiefdelphi.com/forums/showpost.php?p=";
+const CD_POST_URL = "https://www.chiefdelphi.com/forums/showthread.php?p=";
 const CD_THREAD_URL = "https://www.chiefdelphi.com/forums/showthread.php?threadid=";
 
 var previousIDs;
@@ -42,9 +42,11 @@ function handleXMLPage(xmlData) {
                 title    : postXML.title[0]
             };
             // post url
-            post.url = CD_POST_URL + post.postID;
+            post.url = CD_POST_URL + post.postID + "#post" + post.postID;
             // thread url
             post.t_url = CD_THREAD_URL + post.threadID;
+            // preview text but quoted
+            post.preview_quoted = "> " + post.preview.replace(/\n/g, "\n> ");
 
             newIDs.push(post.id);
 
@@ -60,66 +62,85 @@ function handleXMLPage(xmlData) {
 }
 
 function handleNewPost(post) {
-    console.log('new post');
-    // check if it matches any authors
-    for (var i = 0; i < config.authors.length; i++) {
-        if (post.author.toLowerCase() == config.authors[i].toLowerCase()) {
-            triggeredAuthor(post);
+    var previewText      = post.preview;
+    var previewTextLower = post.preview.toLowerCase();
+    config.triggers.forEach(function(trigger) {
+        // haha very funny i know
+        var triggered = false;
+
+        if (trigger.authors) {
+            for (var i = 0; i < trigger.authors.length; i++) {
+                var author = trigger.authors[i];
+                if (post.author.toLowerCase() == author.toLowerCase()) {
+                    triggeredByAuthor(post, trigger);
+                    triggered = true;
+                    break;
+                }
+            }
+        }
+        if (triggered)
             return;
-        }
-    }
 
-    var triggeredKeywords = [];
-    // check if it matches any keywords
-    var previewLower = post.preview.toLowerCase();
-    for (var i = 0; i < config.keywords.length; i++) {
-        var keyword = config.keywords[i];
-        if (keyword.constructor.name === 'String') {
-            if (previewLower.includes(keyword.toLowerCase())) {
-                triggeredKeywords.push(keyword);
-            }
-        } else if (keyword.constructor.name === 'RegExp') {
-            if (keyword.test(post.preview)) {
-                var matches = preview.match(keyword);
-                triggeredKeywords = triggeredKeywords.concat(matches);
-            }
+        var keywordHits = [];
+        if (trigger.keywords) {
+            trigger.keywords.forEach(function(k) {
+                if (k.constructor.name === 'String') {
+                    if (previewTextLower.includes(k.toLowerCase())) {
+                        keywordHits.push(k);
+                        triggered = true;
+                    }
+                } else if (k.constructor.name === 'RegExp') {
+                    if (k.test(previewTest)) {
+                        keywordHits = keywordHits.concat(previewText.match(k));
+                        triggered = true;
+                    }
+                }
+            });
         }
-    }
 
-    // if it was triggered by any keywords
-    if (triggeredKeywords.length > 0) {
-        triggeredKeyword(post, triggeredKeywords);
-    }
+        if (triggered)
+            triggeredByKeywords(post, trigger, keywordHits);
+    });
 }
 
 // post triggered by a particular author
-function triggeredAuthor(post) {
+function triggeredByAuthor(post, trigger) {
     var message = config.format_author
                         .replace('$author', post.author)
                         .replace('$url', post.url)
+                        .replace('$post_quoted', post.preview_quoted)
                         .replace('$post', post.preview)
                         .replace('$thread', post.title)
                         .replace('$t_url', post.t_url);
-    sendMessage(message);
+    if (trigger.mention)
+        message = message.replace('$mention', trigger.mention);
+
+    sendMessage(message, trigger);
 }
 
 // post triggered by a particular keywords(s)
-function triggeredKeyword(post, keywords) {
+function triggeredByKeywords(post, trigger, keywords) {
     var message = config.format_keyword
                         .replace('$keyword', keywords.join(', '))
                         .replace('$author', post.author)
                         .replace('$url', post.url)
+                        .replace('$post_quoted', post.preview_quoted)
                         .replace('$post', post.preview)
+                        .replace('$thread', post.title)
                         .replace('$t_url', post.t_url);
-    sendMessage(message);
+    if (trigger.mention)
+        message = message.replace('$mention', trigger.mention);
+
+    sendMessage(message, trigger);
 }
 
-function sendMessage(msg) {
+function sendMessage(msg, trigger) {
+    var channel = trigger.channel || config.default_channel;
     var payload = {
         "text": msg,
         "username": config.bot_username,
         "icon_emoji": config.bot_icon_emoji,
-        "channel": config.channel
+        "channel": channel
     };
     var options = {
         url: config.slack_webhook_url,
