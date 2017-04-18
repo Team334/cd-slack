@@ -56,4 +56,4 @@ module.exports = {
 - [ ] Trigger bot when a member of a particular team posts.
 - [ ] Get the entire post, not just preview
 - [ ] Ability to subscribe to threads
-- [ ] More granular posting - target keywords towards certain channels & users.
+- [x] More granular posting - target keywords towards certain channels & users.
