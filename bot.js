@@ -85,7 +85,9 @@ function handleNewPost(post) {
         if (trigger.keywords) {
             trigger.keywords.forEach(function(k) {
                 if (k.constructor.name === 'String') {
-                    if (previewTextLower.includes(k.toLowerCase())) {
+                    var regexStr = "\\b" + k + "\\b";
+                    var regex = new RegExp(regexStr, 'gi');
+                    if (regex.test(previewText)) {
                         keywordHits.push(k);
                         triggered = true;
                     }
