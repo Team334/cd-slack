@@ -3,7 +3,7 @@
 A slack bot that notifies your team about Chief Delphi posts. The bot can be triggered
 by certain keywords or posts by a particular author.
 
-<img width="50%" src="https://raw.githubusercontent.com/Team334/cd-slack/master/screenshots/image1.png">
+<img width="90%" src="https://raw.githubusercontent.com/Team334/cd-slack/master/screenshots/image2.png">
 
 ## Configuration
 
