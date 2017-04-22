@@ -114,8 +114,8 @@ function triggeredByAuthor(post, trigger) {
                         .replace('$post', post.preview)
                         .replace('$thread', post.title)
                         .replace('$t_url', post.t_url);
-    if (trigger.mention)
-        message = message.replace('$mention', trigger.mention);
+
+    message = message.replace('$mention', trigger.mention || "");
 
     sendMessage(message, trigger);
 }
@@ -130,8 +130,8 @@ function triggeredByKeywords(post, trigger, keywords) {
                         .replace('$post', post.preview)
                         .replace('$thread', post.title)
                         .replace('$t_url', post.t_url);
-    if (trigger.mention)
-        message = message.replace('$mention', trigger.mention);
+
+    message = message.replace('$mention', trigger.mention || "");
 
     sendMessage(message, trigger);
 }
